@@ -22,10 +22,23 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
     
-    - name: Download Gradle Wrapper JAR
+    - name: Setup Gradle Wrapper
       run: |
+        echo "Creating gradle/wrapper directory..."
         mkdir -p gradle/wrapper
-        curl -L https://repo1.maven.org/maven2/org/gradle/gradle-wrapper/8.0/gradle-wrapper-8.0.jar -o gradle/wrapper/gradle-wrapper.jar
+        
+        echo "Downloading gradle-wrapper.jar..."
+        curl -L -o gradle/wrapper/gradle-wrapper.jar https://repo1.maven.org/maven2/org/gradle/gradle-wrapper/8.0/gradle-wrapper-8.0.jar
+        
+        echo "Verifying download..."
+        ls -lh gradle/wrapper/
+        
+        if [ ! -f gradle/wrapper/gradle-wrapper.jar ]; then
+          echo "ERROR: gradle-wrapper.jar not found!"
+          exit 1
+        fi
+        
+        echo "gradle-wrapper.jar successfully downloaded"
         
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
@@ -60,10 +73,23 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
     
-    - name: Download Gradle Wrapper JAR
+    - name: Setup Gradle Wrapper
       run: |
+        echo "Creating gradle/wrapper directory..."
         mkdir -p gradle/wrapper
-        curl -L https://repo1.maven.org/maven2/org/gradle/gradle-wrapper/8.0/gradle-wrapper-8.0.jar -o gradle/wrapper/gradle-wrapper.jar
+        
+        echo "Downloading gradle-wrapper.jar..."
+        curl -L -o gradle/wrapper/gradle-wrapper.jar https://repo1.maven.org/maven2/org/gradle/gradle-wrapper/8.0/gradle-wrapper-8.0.jar
+        
+        echo "Verifying download..."
+        ls -lh gradle/wrapper/
+        
+        if [ ! -f gradle/wrapper/gradle-wrapper.jar ]; then
+          echo "ERROR: gradle-wrapper.jar not found!"
+          exit 1
+        fi
+        
+        echo "gradle-wrapper.jar successfully downloaded"
         
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
