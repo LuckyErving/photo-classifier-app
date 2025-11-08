@@ -1,2 +1,25 @@
 你是安卓开发工程师，请你帮我开发一个安卓APP，功能是用户可以拍照，拍完照后可以进行分类，即用户可以选择保存到不同的文件夹，在APP内能够创建新的文件夹，并且可以浏览和管理这些照片。APP要能够支持安卓10及以上版本。
 请帮我使用github actions来实现CI/CD，要求每次推送版本代码后自动进行构建和测试，最后生成一个release版本的APK文件并上传到GitHub的Release页面。
+
+
+
+
+
+问题解决方案
+我修改了 GitHub Actions 工作流，添加了一个步骤来自动下载 gradle-wrapper.jar：
+
+- name: Download Gradle Wrapper JAR
+  run: |
+    mkdir -p gradle/wrapper
+    curl -L https://repo1.maven.org/maven2/org/gradle/gradle-wrapper/8.0/gradle-wrapper-8.0.jar -o gradle/wrapper/gradle-wrapper.jar
+
+这样每次构建时，GitHub Actions 都会自动从 Maven Central 下载 Gradle Wrapper JAR 文件，不需要将这个二进制文件提交到仓库中。
+
+优点：
+
+✅ 不需要在本地下载大文件
+✅ 不需要提交二进制文件到 Git
+✅ 构建时从可靠的 Maven Central 快速下载
+✅ 同时修复了 build 和 release 两个 job
+现在你可以访问 GitHub Actions 页面查看构建进度，这次应该会成功！🚀
+
