@@ -30,24 +30,28 @@ jobs:
         echo "Downloading Gradle distribution..."
         wget -q https://services.gradle.org/distributions/gradle-8.0-bin.zip -O /tmp/gradle.zip
         
-        echo "Extracting gradle-wrapper.jar from plugins directory..."
-        unzip -q -j /tmp/gradle.zip "gradle-8.0/lib/plugins/gradle-wrapper-8.0.jar" -d gradle/wrapper/
+        echo "Extracting wrapper jars from Gradle distribution..."
+        unzip -q -j /tmp/gradle.zip \
+          "gradle-8.0/lib/plugins/gradle-wrapper-8.0.jar" \
+          "gradle-8.0/lib/gradle-wrapper-shared-8.0.jar" \
+          -d gradle/wrapper/
         
-        echo "Renaming to standard name..."
+        echo "Renaming to standard names..."
         mv gradle/wrapper/gradle-wrapper-8.0.jar gradle/wrapper/gradle-wrapper.jar
+        mv gradle/wrapper/gradle-wrapper-shared-8.0.jar gradle/wrapper/gradle-wrapper-shared.jar
         
         echo "Cleaning up..."
         rm /tmp/gradle.zip
         
         echo "Verifying..."
-        ls -lh gradle/wrapper/gradle-wrapper.jar
+        ls -lh gradle/wrapper/
         
         if [ ! -s gradle/wrapper/gradle-wrapper.jar ]; then
-          echo "ERROR: gradle-wrapper.jar is empty or missing!"
+          echo "ERROR: gradle-wrapper.jar is missing!"
           exit 1
         fi
         
-        echo "✅ gradle-wrapper.jar successfully extracted ($(stat -c%s gradle/wrapper/gradle-wrapper.jar) bytes)"
+        echo "✅ Gradle wrapper jars successfully extracted"
         
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
@@ -90,24 +94,28 @@ jobs:
         echo "Downloading Gradle distribution..."
         wget -q https://services.gradle.org/distributions/gradle-8.0-bin.zip -O /tmp/gradle.zip
         
-        echo "Extracting gradle-wrapper.jar from plugins directory..."
-        unzip -q -j /tmp/gradle.zip "gradle-8.0/lib/plugins/gradle-wrapper-8.0.jar" -d gradle/wrapper/
+        echo "Extracting wrapper jars from Gradle distribution..."
+        unzip -q -j /tmp/gradle.zip \
+          "gradle-8.0/lib/plugins/gradle-wrapper-8.0.jar" \
+          "gradle-8.0/lib/gradle-wrapper-shared-8.0.jar" \
+          -d gradle/wrapper/
         
-        echo "Renaming to standard name..."
+        echo "Renaming to standard names..."
         mv gradle/wrapper/gradle-wrapper-8.0.jar gradle/wrapper/gradle-wrapper.jar
+        mv gradle/wrapper/gradle-wrapper-shared-8.0.jar gradle/wrapper/gradle-wrapper-shared.jar
         
         echo "Cleaning up..."
         rm /tmp/gradle.zip
         
         echo "Verifying..."
-        ls -lh gradle/wrapper/gradle-wrapper.jar
+        ls -lh gradle/wrapper/
         
         if [ ! -s gradle/wrapper/gradle-wrapper.jar ]; then
-          echo "ERROR: gradle-wrapper.jar is empty or missing!"
+          echo "ERROR: gradle-wrapper.jar is missing!"
           exit 1
         fi
         
-        echo "✅ gradle-wrapper.jar successfully extracted ($(stat -c%s gradle/wrapper/gradle-wrapper.jar) bytes)"
+        echo "✅ Gradle wrapper jars successfully extracted"
         
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
