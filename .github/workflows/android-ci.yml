@@ -22,48 +22,19 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
     
-    - name: Setup Gradle Wrapper
-      run: |
-        echo "Creating gradle/wrapper directory..."
-        mkdir -p gradle/wrapper
-        
-        echo "Downloading Gradle distribution..."
-        wget -q https://services.gradle.org/distributions/gradle-8.0-bin.zip -O /tmp/gradle.zip
-        
-        echo "Extracting wrapper jars from Gradle distribution..."
-        unzip -q -j /tmp/gradle.zip \
-          "gradle-8.0/lib/plugins/gradle-wrapper-8.0.jar" \
-          "gradle-8.0/lib/gradle-wrapper-shared-8.0.jar" \
-          -d gradle/wrapper/
-        
-        echo "Renaming to standard names..."
-        mv gradle/wrapper/gradle-wrapper-8.0.jar gradle/wrapper/gradle-wrapper.jar
-        mv gradle/wrapper/gradle-wrapper-shared-8.0.jar gradle/wrapper/gradle-wrapper-shared.jar
-        
-        echo "Cleaning up..."
-        rm /tmp/gradle.zip
-        
-        echo "Verifying..."
-        ls -lh gradle/wrapper/
-        
-        if [ ! -s gradle/wrapper/gradle-wrapper.jar ]; then
-          echo "ERROR: gradle-wrapper.jar is missing!"
-          exit 1
-        fi
-        
-        echo "✅ Gradle wrapper jars successfully extracted"
-        
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v3
       
     - name: Build with Gradle
-      run: ./gradlew build
+      run: |
+        chmod +x gradlew
+        ./gradlew build --no-daemon
       
     - name: Run tests
-      run: ./gradlew test
+      run: ./gradlew test --no-daemon
       
     - name: Build Release APK
-      run: ./gradlew assembleRelease
+      run: ./gradlew assembleRelease --no-daemon
       
     - name: Upload APK artifact
       uses: actions/upload-artifact@v4
@@ -86,42 +57,13 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
     
-    - name: Setup Gradle Wrapper
-      run: |
-        echo "Creating gradle/wrapper directory..."
-        mkdir -p gradle/wrapper
-        
-        echo "Downloading Gradle distribution..."
-        wget -q https://services.gradle.org/distributions/gradle-8.0-bin.zip -O /tmp/gradle.zip
-        
-        echo "Extracting wrapper jars from Gradle distribution..."
-        unzip -q -j /tmp/gradle.zip \
-          "gradle-8.0/lib/plugins/gradle-wrapper-8.0.jar" \
-          "gradle-8.0/lib/gradle-wrapper-shared-8.0.jar" \
-          -d gradle/wrapper/
-        
-        echo "Renaming to standard names..."
-        mv gradle/wrapper/gradle-wrapper-8.0.jar gradle/wrapper/gradle-wrapper.jar
-        mv gradle/wrapper/gradle-wrapper-shared-8.0.jar gradle/wrapper/gradle-wrapper-shared.jar
-        
-        echo "Cleaning up..."
-        rm /tmp/gradle.zip
-        
-        echo "Verifying..."
-        ls -lh gradle/wrapper/
-        
-        if [ ! -s gradle/wrapper/gradle-wrapper.jar ]; then
-          echo "ERROR: gradle-wrapper.jar is missing!"
-          exit 1
-        fi
-        
-        echo "✅ Gradle wrapper jars successfully extracted"
-        
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v3
       
     - name: Build Release APK
-      run: ./gradlew assembleRelease
+      run: |
+        chmod +x gradlew
+        ./gradlew assembleRelease --no-daemon
       
     - name: Get version from tag
       id: get_version
