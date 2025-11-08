@@ -27,28 +27,25 @@ jobs:
         echo "Creating gradle/wrapper directory..."
         mkdir -p gradle/wrapper
         
-        echo "Downloading gradle-wrapper.jar..."
-        curl -L -f -o gradle/wrapper/gradle-wrapper.jar \
-          https://repo1.maven.org/maven2/org/gradle/gradle-wrapper/8.0/gradle-wrapper-8.0.jar \
-          || curl -L -f -o gradle/wrapper/gradle-wrapper.jar \
-          https://services.gradle.org/distributions-snapshots/gradle-wrapper-8.0.jar \
-          || (echo "Failed to download gradle-wrapper.jar" && exit 1)
+        echo "Downloading Gradle distribution..."
+        wget -q https://services.gradle.org/distributions/gradle-8.0-bin.zip -O /tmp/gradle.zip
         
-        echo "Verifying download..."
-        ls -lh gradle/wrapper/
-        file gradle/wrapper/gradle-wrapper.jar
+        echo "Extracting gradle-wrapper.jar..."
+        unzip -q -j /tmp/gradle.zip "gradle-8.0/lib/gradle-wrapper-8.0.jar" -d gradle/wrapper/
+        mv gradle/wrapper/gradle-wrapper-8.0.jar gradle/wrapper/gradle-wrapper.jar
         
-        if [ ! -f gradle/wrapper/gradle-wrapper.jar ]; then
-          echo "ERROR: gradle-wrapper.jar not found!"
-          exit 1
-        fi
+        echo "Cleaning up..."
+        rm /tmp/gradle.zip
+        
+        echo "Verifying..."
+        ls -lh gradle/wrapper/gradle-wrapper.jar
         
         if [ ! -s gradle/wrapper/gradle-wrapper.jar ]; then
-          echo "ERROR: gradle-wrapper.jar is empty!"
+          echo "ERROR: gradle-wrapper.jar is empty or missing!"
           exit 1
         fi
         
-        echo "gradle-wrapper.jar successfully downloaded ($(stat -f%z gradle/wrapper/gradle-wrapper.jar 2>/dev/null || stat -c%s gradle/wrapper/gradle-wrapper.jar) bytes)"
+        echo "gradle-wrapper.jar successfully extracted ($(stat -c%s gradle/wrapper/gradle-wrapper.jar) bytes)"
         
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
@@ -88,28 +85,25 @@ jobs:
         echo "Creating gradle/wrapper directory..."
         mkdir -p gradle/wrapper
         
-        echo "Downloading gradle-wrapper.jar..."
-        curl -L -f -o gradle/wrapper/gradle-wrapper.jar \
-          https://repo1.maven.org/maven2/org/gradle/gradle-wrapper/8.0/gradle-wrapper-8.0.jar \
-          || curl -L -f -o gradle/wrapper/gradle-wrapper.jar \
-          https://services.gradle.org/distributions-snapshots/gradle-wrapper-8.0.jar \
-          || (echo "Failed to download gradle-wrapper.jar" && exit 1)
+        echo "Downloading Gradle distribution..."
+        wget -q https://services.gradle.org/distributions/gradle-8.0-bin.zip -O /tmp/gradle.zip
         
-        echo "Verifying download..."
-        ls -lh gradle/wrapper/
-        file gradle/wrapper/gradle-wrapper.jar
+        echo "Extracting gradle-wrapper.jar..."
+        unzip -q -j /tmp/gradle.zip "gradle-8.0/lib/gradle-wrapper-8.0.jar" -d gradle/wrapper/
+        mv gradle/wrapper/gradle-wrapper-8.0.jar gradle/wrapper/gradle-wrapper.jar
         
-        if [ ! -f gradle/wrapper/gradle-wrapper.jar ]; then
-          echo "ERROR: gradle-wrapper.jar not found!"
-          exit 1
-        fi
+        echo "Cleaning up..."
+        rm /tmp/gradle.zip
+        
+        echo "Verifying..."
+        ls -lh gradle/wrapper/gradle-wrapper.jar
         
         if [ ! -s gradle/wrapper/gradle-wrapper.jar ]; then
-          echo "ERROR: gradle-wrapper.jar is empty!"
+          echo "ERROR: gradle-wrapper.jar is empty or missing!"
           exit 1
         fi
         
-        echo "gradle-wrapper.jar successfully downloaded ($(stat -f%z gradle/wrapper/gradle-wrapper.jar 2>/dev/null || stat -c%s gradle/wrapper/gradle-wrapper.jar) bytes)"
+        echo "gradle-wrapper.jar successfully extracted ($(stat -c%s gradle/wrapper/gradle-wrapper.jar) bytes)"
         
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
