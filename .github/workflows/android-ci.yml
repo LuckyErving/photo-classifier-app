@@ -28,17 +28,27 @@ jobs:
         mkdir -p gradle/wrapper
         
         echo "Downloading gradle-wrapper.jar..."
-        curl -L -o gradle/wrapper/gradle-wrapper.jar https://repo1.maven.org/maven2/org/gradle/gradle-wrapper/8.0/gradle-wrapper-8.0.jar
+        curl -L -f -o gradle/wrapper/gradle-wrapper.jar \
+          https://repo1.maven.org/maven2/org/gradle/gradle-wrapper/8.0/gradle-wrapper-8.0.jar \
+          || curl -L -f -o gradle/wrapper/gradle-wrapper.jar \
+          https://services.gradle.org/distributions-snapshots/gradle-wrapper-8.0.jar \
+          || (echo "Failed to download gradle-wrapper.jar" && exit 1)
         
         echo "Verifying download..."
         ls -lh gradle/wrapper/
+        file gradle/wrapper/gradle-wrapper.jar
         
         if [ ! -f gradle/wrapper/gradle-wrapper.jar ]; then
           echo "ERROR: gradle-wrapper.jar not found!"
           exit 1
         fi
         
-        echo "gradle-wrapper.jar successfully downloaded"
+        if [ ! -s gradle/wrapper/gradle-wrapper.jar ]; then
+          echo "ERROR: gradle-wrapper.jar is empty!"
+          exit 1
+        fi
+        
+        echo "gradle-wrapper.jar successfully downloaded ($(stat -f%z gradle/wrapper/gradle-wrapper.jar 2>/dev/null || stat -c%s gradle/wrapper/gradle-wrapper.jar) bytes)"
         
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
@@ -79,17 +89,27 @@ jobs:
         mkdir -p gradle/wrapper
         
         echo "Downloading gradle-wrapper.jar..."
-        curl -L -o gradle/wrapper/gradle-wrapper.jar https://repo1.maven.org/maven2/org/gradle/gradle-wrapper/8.0/gradle-wrapper-8.0.jar
+        curl -L -f -o gradle/wrapper/gradle-wrapper.jar \
+          https://repo1.maven.org/maven2/org/gradle/gradle-wrapper/8.0/gradle-wrapper-8.0.jar \
+          || curl -L -f -o gradle/wrapper/gradle-wrapper.jar \
+          https://services.gradle.org/distributions-snapshots/gradle-wrapper-8.0.jar \
+          || (echo "Failed to download gradle-wrapper.jar" && exit 1)
         
         echo "Verifying download..."
         ls -lh gradle/wrapper/
+        file gradle/wrapper/gradle-wrapper.jar
         
         if [ ! -f gradle/wrapper/gradle-wrapper.jar ]; then
           echo "ERROR: gradle-wrapper.jar not found!"
           exit 1
         fi
         
-        echo "gradle-wrapper.jar successfully downloaded"
+        if [ ! -s gradle/wrapper/gradle-wrapper.jar ]; then
+          echo "ERROR: gradle-wrapper.jar is empty!"
+          exit 1
+        fi
+        
+        echo "gradle-wrapper.jar successfully downloaded ($(stat -f%z gradle/wrapper/gradle-wrapper.jar 2>/dev/null || stat -c%s gradle/wrapper/gradle-wrapper.jar) bytes)"
         
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
