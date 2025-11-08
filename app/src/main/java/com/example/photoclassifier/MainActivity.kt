@@ -66,9 +66,12 @@ class MainActivity : AppCompatActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             requiredPermissions.add(Manifest.permission.READ_MEDIA_IMAGES)
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            // Android 10-12 不需要额外权限，使用 Scoped Storage
-        } else {
+            // Android 10-12 写入DCIM需要 WRITE_EXTERNAL_STORAGE
             requiredPermissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        } else {
+            // Android 9- 需要存储权限
+            requiredPermissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            requiredPermissions.add(Manifest.permission.READ_EXTERNAL_STORAGE)
         }
 
         val permissionsToRequest = requiredPermissions.filter {

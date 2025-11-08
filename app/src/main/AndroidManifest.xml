@@ -9,11 +9,10 @@
     
     <uses-permission android:name="android.permission.CAMERA" />
     
-    <!-- 存储权限 - Android 10+ 使用 Scoped Storage -->
+    <!-- 存储权限 -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="28"
         tools:ignore="ScopedStorage" />
     
     <!-- Android 13+ 的照片权限 -->
@@ -26,7 +25,7 @@
         android:roundIcon="@android:drawable/ic_menu_camera"
         android:supportsRtl="true"
         android:theme="@style/Theme.PhotoClassifier"
-        android:requestLegacyExternalStorage="false"
+        android:requestLegacyExternalStorage="true"
         tools:targetApi="31">
         
         <!-- 主Activity -->

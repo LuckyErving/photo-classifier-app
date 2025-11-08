@@ -16,18 +16,41 @@ class FileManager(private val context: Context) {
     companion object {
         private const val APP_FOLDER = "PhotoClassifier"
         private const val DEFAULT_FOLDER = "Default"
+        private const val PREFS_NAME = "PhotoClassifierPrefs"
+        private const val KEY_LAST_FOLDER = "last_selected_folder"
     }
 
+    private val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+
     /**
-     * 获取应用的根目录
+     * 获取应用的根目录（存储在公共DCIM目录下，可通过USB访问）
      */
     fun getAppRootDirectory(): File {
-        val picturesDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-        val appDir = File(picturesDir, APP_FOLDER)
+        // 使用公共的DCIM目录，这样用户可以通过USB数据线访问
+        val dcimDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
+        val appDir = File(dcimDir, APP_FOLDER)
         if (!appDir.exists()) {
             appDir.mkdirs()
         }
         return appDir
+    }
+
+    /**
+     * 保存最后选择的文件夹路径
+     */
+    fun saveLastSelectedFolder(folder: File) {
+        prefs.edit().putString(KEY_LAST_FOLDER, folder.absolutePath).apply()
+    }
+
+    /**
+     * 获取最后选择的文件夹
+     */
+    fun getLastSelectedFolder(): File? {
+        val path = prefs.getString(KEY_LAST_FOLDER, null)
+        return path?.let { 
+            val folder = File(it)
+            if (folder.exists() && folder.isDirectory) folder else null
+        }
     }
 
     /**

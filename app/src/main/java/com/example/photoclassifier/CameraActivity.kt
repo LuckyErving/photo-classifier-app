@@ -1,10 +1,12 @@
 package com.example.photoclassifier
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
@@ -63,14 +65,31 @@ class CameraActivity : AppCompatActivity() {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.spinnerFolder.adapter = adapter
         
-        // 默认选择第一个文件夹
-        if (folders.isNotEmpty()) {
+        // 优先加载上次选择的文件夹，否则选择默认文件夹
+        val lastFolder = fileManager.getLastSelectedFolder()
+        val folderIndex = if (lastFolder != null) {
+            folders.indexOfFirst { it.absolutePath == lastFolder.absolutePath }
+        } else {
+            -1
+        }
+        
+        if (folderIndex >= 0) {
+            binding.spinnerFolder.setSelection(folderIndex)
+            selectedFolder = folders[folderIndex]
+        } else if (folders.isNotEmpty()) {
             selectedFolder = folders[0]
         }
         
         binding.spinnerFolder.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 selectedFolder = folders[position]
+                // 保存用户选择的文件夹
+                selectedFolder?.let { fileManager.saveLastSelectedFolder(it) }
+                Toast.makeText(
+                    this@CameraActivity,
+                    "${getString(R.string.current_folder)}: ${folders[position].name}",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -90,6 +109,43 @@ class CameraActivity : AppCompatActivity() {
         binding.btnSwitchCamera.setOnClickListener {
             switchCamera()
         }
+
+        binding.btnNewFolder.setOnClickListener {
+            showCreateFolderDialog()
+        }
+    }
+
+    /**
+     * 显示创建文件夹对话框
+     */
+    private fun showCreateFolderDialog() {
+        val editText = EditText(this)
+        editText.hint = getString(R.string.folder_name)
+        
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.create_folder))
+            .setView(editText)
+            .setPositiveButton(getString(R.string.ok)) { _, _ ->
+                val folderName = editText.text.toString().trim()
+                if (folderName.isNotEmpty()) {
+                    if (fileManager.createFolder(folderName)) {
+                        Toast.makeText(this, getString(R.string.folder_created), Toast.LENGTH_SHORT).show()
+                        // 刷新文件夹列表
+                        setupFolderSpinner()
+                        // 选择新创建的文件夹
+                        val newFolderIndex = folders.indexOfFirst { it.name == folderName }
+                        if (newFolderIndex >= 0) {
+                            binding.spinnerFolder.setSelection(newFolderIndex)
+                        }
+                    } else {
+                        Toast.makeText(this, getString(R.string.folder_exists), Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    Toast.makeText(this, getString(R.string.invalid_folder_name), Toast.LENGTH_SHORT).show()
+                }
+            }
+            .setNegativeButton(getString(R.string.cancel), null)
+            .show()
     }
 
     /**
