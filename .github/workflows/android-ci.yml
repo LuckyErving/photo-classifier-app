@@ -42,13 +42,15 @@ jobs:
     - name: Upload APK artifact
       uses: actions/upload-artifact@v4
       with:
-        name: app-release
-        path: app/build/outputs/apk/release/app-release.apk
+        name: photo-classifier-app-release
+        path: app/build/outputs/apk/release/*.apk
         
   release:
     needs: build
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: write
     
     steps:
     - name: Checkout code
@@ -75,38 +77,54 @@ jobs:
       id: get_version
       run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
       
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Rename APK
+      run: |
+        mv app/build/outputs/apk/release/app-release-unsigned.apk app/build/outputs/apk/release/photo-classifier-app-${{ steps.get_version.outputs.VERSION }}.apk || \
+        mv app/build/outputs/apk/release/app-release.apk app/build/outputs/apk/release/photo-classifier-app-${{ steps.get_version.outputs.VERSION }}.apk
+      
+    - name: Create Release and Upload APK
+      uses: softprops/action-gh-release@v1
       with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ steps.get_version.outputs.VERSION }}
+        name: Release ${{ steps.get_version.outputs.VERSION }}
         draft: false
         prerelease: false
         body: |
           ## 照片分类管理 ${{ steps.get_version.outputs.VERSION }}
           
-          ### 功能特性
-          - 📷 拍照功能
+          ### 新增功能 ✨
+          - 📁 **文件夹管理增强**：拍照前可选择保存文件夹
+          - 🔄 **快速切换**：随时切换文件夹，无需重新拍照
+          - ➕ **一键创建**：点击"+"按钮快速创建新文件夹
+          - 💾 **智能记忆**：自动记住上次选择的文件夹
+          - 💻 **USB导出**：照片保存在 DCIM/PhotoClassifier，电脑可直接访问
+          
+          ### 核心特性 🎯
+          - 📷 相机拍照功能
           - 📁 文件夹分类管理
           - 🖼️ 照片浏览和管理
-          - 🗑️ 删除照片
-          - ✅ 支持 Android 10+
+          - 🗑️ 删除和移动照片
+          - ✅ 支持 Android 9+
           
-          ### 安装说明
-          下载 app-release.apk 并安装到您的 Android 设备上。
+          ### 存储位置 📍
+          ```
+          内部存储/DCIM/PhotoClassifier/<文件夹名>/
+          ```
           
-          ### 更新内容
-          请在此处添加更新说明...
-        
-    - name: Upload Release APK
-      uses: actions/upload-release-asset@v1
+          ### 安装说明 📥
+          1. 下载 `photo-classifier-app-${{ steps.get_version.outputs.VERSION }}.apk`
+          2. 在 Android 设备上安装
+          3. 授予相机和存储权限
+          4. 开始使用！
+          
+          ### 系统要求 📱
+          - Android 9.0 (API 28) 及以上
+          - 相机权限
+          - 存储权限
+          
+          ---
+          
+          📖 查看完整文档：[README.md](https://github.com/${{ github.repository }}/blob/main/README.md)
+        files: |
+          app/build/outputs/apk/release/photo-classifier-app-${{ steps.get_version.outputs.VERSION }}.apk
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./app/build/outputs/apk/release/app-release.apk
-        asset_name: PhotoClassifier-${{ steps.get_version.outputs.VERSION }}.apk
-        asset_content_type: application/vnd.android.package-archive
