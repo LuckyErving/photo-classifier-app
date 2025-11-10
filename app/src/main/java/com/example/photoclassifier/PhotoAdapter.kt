@@ -11,7 +11,8 @@ import com.example.photoclassifier.databinding.ItemPhotoBinding
  */
 class PhotoAdapter(
     private var photos: List<Photo>,
-    private val onDeleteClick: (Photo) -> Unit
+    private val onDeleteClick: (Photo) -> Unit,
+    private val onPhotoClick: (Photo) -> Unit
 ) : RecyclerView.Adapter<PhotoAdapter.PhotoViewHolder>() {
 
     inner class PhotoViewHolder(private val binding: ItemPhotoBinding) :
@@ -30,9 +31,9 @@ class PhotoAdapter(
                 onDeleteClick(photo)
             }
 
-            // 点击图片可以放大查看（可选功能）
+            // 点击图片预览
             binding.ivPhoto.setOnClickListener {
-                // TODO: 实现图片全屏查看
+                onPhotoClick(photo)
             }
         }
     }

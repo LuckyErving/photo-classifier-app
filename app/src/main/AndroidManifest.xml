@@ -49,6 +49,12 @@
             android:name=".GalleryActivity"
             android:exported="false" />
         
+        <!-- 照片预览Activity -->
+        <activity
+            android:name=".PhotoViewActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+        
         <!-- FileProvider for sharing files -->
         <provider
             android:name="androidx.core.content.FileProvider"

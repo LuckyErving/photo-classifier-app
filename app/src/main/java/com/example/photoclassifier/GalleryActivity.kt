@@ -1,6 +1,7 @@
 package com.example.photoclassifier
 
 import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
@@ -43,14 +44,31 @@ class GalleryActivity : AppCompatActivity() {
      * 设置RecyclerView
      */
     private fun setupRecyclerView() {
-        photoAdapter = PhotoAdapter(currentPhotos) { photo ->
-            showDeleteConfirmDialog(photo)
-        }
+        photoAdapter = PhotoAdapter(
+            photos = currentPhotos,
+            onDeleteClick = { photo ->
+                showDeleteConfirmDialog(photo)
+            },
+            onPhotoClick = { photo ->
+                openPhotoView(photo)
+            }
+        )
         
         binding.recyclerView.apply {
             layoutManager = GridLayoutManager(this@GalleryActivity, 2)
             adapter = photoAdapter
         }
+    }
+
+    /**
+     * 打开照片预览
+     */
+    private fun openPhotoView(photo: Photo) {
+        val intent = Intent(this, PhotoViewActivity::class.java).apply {
+            putExtra(PhotoViewActivity.EXTRA_PHOTO_PATH, photo.path)
+            putExtra(PhotoViewActivity.EXTRA_PHOTO_NAME, photo.name)
+        }
+        startActivity(intent)
     }
 
     /**

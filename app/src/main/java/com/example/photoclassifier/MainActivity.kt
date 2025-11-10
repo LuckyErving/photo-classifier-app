@@ -50,10 +50,6 @@ class MainActivity : AppCompatActivity() {
         binding.btnViewGallery.setOnClickListener {
             openGallery()
         }
-
-        binding.btnManageFolders.setOnClickListener {
-            openGallery() // 在Gallery Activity中可以管理文件夹
-        }
     }
 
     /**
