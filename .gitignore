@@ -62,3 +62,6 @@ vcs.xml
 *.log
 *.swp
 *~
+
+*.md
+!README.md
